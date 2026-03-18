@@ -1,13 +1,10 @@
 # Changelog
 
-## 1.0.0
+## 1.0.1
 
-Initial release.
+- Downgraded NeoForge to 21.1.217 for broader compatibility
+- Adjacent chunks from the same player are now merged into clean polygons with no internal borders
+- Fixed BlueMap world ID matching (handles `world#minecraft:overworld` format)
+- Claim changes now update the map live with debounced refreshes
+- Collinear polygon points are removed for cleaner shapes
 
-- Display claimed chunks from Open Parties and Claims on BlueMap
-- Color-coded regions using each player's configured claim color
-- Adjacent chunks merged into clean polygons with no internal borders
-- Live updates when claims change (debounced for performance)
-- Sub-claim support with distinct colors per sub-configuration
-- Configurable fill opacity, line opacity, line width, and marker height
-- Multi-dimension support (Overworld, Nether, End, modded dimensions)
