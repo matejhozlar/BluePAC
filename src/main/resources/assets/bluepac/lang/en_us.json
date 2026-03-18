@@ -1,0 +1,13 @@
+{
+  "itemGroup.bluepac": "Example Mod Tab",
+  "block.bluepac.example_block": "Example Block",
+  "item.bluepac.example_item": "Example Item",
+
+  "bluepac.configuration.title": "BluePAC Configs",
+  "bluepac.configuration.section.bluepac.common.toml": "BluePAC Configs",
+  "bluepac.configuration.section.bluepac.common.toml.title": "BluePAC Configs",
+  "bluepac.configuration.items": "Item List",
+  "bluepac.configuration.logDirtBlock": "Log Dirt Block",
+  "bluepac.configuration.magicNumberIntroduction": "Magic Number Text",
+  "bluepac.configuration.magicNumber": "Magic Number"
+}
