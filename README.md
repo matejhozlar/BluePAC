@@ -2,7 +2,6 @@
 
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-5E7C16?logo=minecraft&logoColor=white)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1+-orange)
-![Server Side](https://img.shields.io/badge/Side-Server-blue)
 
 **BluePAC** bridges [BlueMap](https://bluemap.bluecolored.de/) and [Open Parties and Claims](https://www.curseforge.com/minecraft/mc-mods/open-parties-and-claims) to display color-coded claimed chunks directly on your BlueMap web map. See at a glance who owns what — no need to log in to the game.
 
