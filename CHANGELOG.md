@@ -12,4 +12,5 @@
 - Expired claims now show as "EXPIRED - PlayerName" on the map
 - Player names are resolved from the server profile cache when OpenPAC doesn't have them
 - BlueMap and OpenPAC are now marked as required dependencies
+- Claims now always use the player's main color instead of sub-config colors
 

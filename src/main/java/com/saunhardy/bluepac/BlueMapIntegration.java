@@ -115,8 +115,7 @@ public class BlueMapIntegration {
                 dimClaims.getStream().forEach(claimPosList -> {
                     var claimState = claimPosList.getClaimState();
                     int subConfigIndex = claimState.getSubConfigIndex();
-                    Integer subColor = playerInfo.getClaimsColor(subConfigIndex);
-                    int color = subColor != null ? subColor : playerInfo.getClaimsColor();
+                    int color = playerInfo.getClaimsColor();
                     String subName = playerInfo.getClaimsName(subConfigIndex);
                     String claimName = subName != null ? subName : playerInfo.getClaimsName();
 
