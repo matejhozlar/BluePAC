@@ -1,25 +1,58 @@
+# BluePAC – BlueMap + Open Parties and Claims Integration
 
-Installation information
-=======
+![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-5E7C16?logo=minecraft&logoColor=white)
+![NeoForge](https://img.shields.io/badge/NeoForge-21.1+-orange)
+![Server Side](https://img.shields.io/badge/Side-Server-blue)
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+**BluePAC** bridges [BlueMap](https://bluemap.bluecolored.de/) and [Open Parties and Claims](https://www.curseforge.com/minecraft/mc-mods/open-parties-and-claims) to display color-coded claimed chunks directly on your BlueMap web map. See at a glance who owns what — no need to log in to the game.
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+---
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+## Features
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+- **Color-coded claim regions** — Each player's claims are rendered using their OpenPAC-configured color, making it easy to distinguish ownership at a glance.
+- **Merged polygons** — Adjacent chunks from the same player are merged into clean shapes with no internal borders, keeping the map tidy even with hundreds of claims.
+- **Live updates** — Markers update within moments of a player claiming or unclaiming chunks. No server restart or manual reload needed.
+- **Sub-claim support** — Different sub-configurations are rendered with their own colors and labels.
+- **Multi-dimension** — Works across Overworld, Nether, End, and any modded dimensions.
+- **Configurable appearance** — Tweak fill opacity, border opacity, line width, and marker height to match your server's style.
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+---
+
+## Requirements
+
+- Minecraft **1.21.1**
+- **NeoForge** 21.1+
+- [**BlueMap**](https://modrinth.com/plugin/bluemap)
+- [**Open Parties and Claims**](https://modrinth.com/mod/open-parties-and-claims)
+
+---
+
+## Configuration
+
+On first launch the mod generates `config/bluepac-common.toml`:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `fillOpacity` | `0.3` | Fill transparency of claim regions (0.0–1.0) |
+| `lineOpacity` | `0.8` | Border transparency of claim regions (0.0–1.0) |
+| `lineWidth` | `2` | Border width in pixels |
+| `markerYHeight` | `64` | Y level at which markers are drawn on the map |
+
+---
+
+## Installation
+
+1. Install BlueMap and Open Parties and Claims on your server.
+2. Drop the BluePAC jar into your server's `mods/` folder.
+3. Start the server — claimed chunks will appear on the BlueMap web map automatically.
+
+---
+
+Made by [@saunhardy](https://github.com/matejhozlar)
+
+---
+
+## Disclaimer
+
+BluePAC is an independent, third-party mod and is **not affiliated with, endorsed by, or associated with** the BlueMap or Open Parties and Claims projects. BlueMap and Open Parties and Claims are the property of their respective authors. All trademarks and registered trademarks are the property of their respective owners.
