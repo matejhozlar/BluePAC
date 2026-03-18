@@ -90,7 +90,7 @@ Bluemap integration with OpenPAC
 
 [[dependencies.${mod_id}]]
     modId="bluemap"
-    type="optional"
+    type="required"
     reason="BluePAC displays claimed chunks on BlueMap"
     versionRange="*"
     ordering="AFTER"
@@ -98,7 +98,7 @@ Bluemap integration with OpenPAC
 
 [[dependencies.${mod_id}]]
     modId="openpartiesandclaims"
-    type="optional"
+    type="required"
     reason="BluePAC reads claim data from Open Parties and Claims"
     versionRange="*"
     ordering="AFTER"

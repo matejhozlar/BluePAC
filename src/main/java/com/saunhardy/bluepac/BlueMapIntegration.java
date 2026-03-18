@@ -12,6 +12,7 @@ import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerListenerAPI;
 import xaero.pac.common.server.api.OpenPACServerAPI;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -96,9 +97,15 @@ public class BlueMapIntegration {
         // Group chunks by dimension → (player+subConfig) → set of ChunkPos
         Map<String, Map<String, ClaimGroup>> dimensionGroups = new HashMap<>();
 
+        var playerConfigs = OpenPACServerAPI.get(server).getPlayerConfigs();
+
         claimsManager.getPlayerInfoStream().forEach(playerInfo -> {
             var playerId = playerInfo.getPlayerId();
-            var playerName = playerInfo.getPlayerUsername();
+            var playerName = resolvePlayerName(playerInfo.getPlayerUsername(), playerId);
+
+            // Check if this player's claims are expired
+            var config = playerConfigs.getLoadedConfig(playerId);
+            boolean expired = config != null && config.getType() == PlayerConfigType.EXPIRED;
 
             playerInfo.getStream().forEach(entry -> {
                 ResourceLocation dimension = entry.getKey();
@@ -114,7 +121,7 @@ public class BlueMapIntegration {
                     String claimName = subName != null ? subName : playerInfo.getClaimsName();
 
                     String groupKey = playerId + "_" + subConfigIndex;
-                    String label = buildLabel(playerName, playerId.toString(), claimName);
+                    String label = buildLabel(playerName, playerId.toString(), claimName, expired);
 
                     ClaimGroup group = dimensionGroups
                             .computeIfAbsent(dimKey, k -> new HashMap<>())
@@ -402,12 +409,29 @@ public class BlueMapIntegration {
         return (hashIndex >= 0) ? blueMapWorldId.substring(hashIndex + 1) : blueMapWorldId;
     }
 
-    private static String buildLabel(String playerName, String playerIdStr, String claimName) {
+    private static String buildLabel(String playerName, String playerIdStr, String claimName, boolean expired) {
         String label = (playerName != null && !playerName.isEmpty()) ? playerName : playerIdStr;
         if (claimName != null && !claimName.isEmpty()) {
             label += " - " + claimName;
         }
+        if (expired) {
+            label = "EXPIRED - " + label;
+        }
         return label;
+    }
+
+    /**
+     * Resolves a player name, falling back to the server's profile cache if the
+     * name from OpenPAC is null (e.g. for expired/offline players).
+     */
+    private static String resolvePlayerName(String opacName, java.util.UUID playerId) {
+        if (opacName != null && !opacName.isEmpty()) return opacName;
+        if (server == null) return null;
+        var cache = server.getProfileCache();
+        if (cache == null) return null;
+        return cache.get(playerId)
+                .map(com.mojang.authlib.GameProfile::getName)
+                .orElse(null);
     }
 
     private static class ClaimGroup {
