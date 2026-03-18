@@ -247,69 +247,96 @@ public class BlueMapIntegration {
 
     /**
      * Traces the exterior outline polygon of a connected component of chunks.
-     * Collects border edges (edges between a chunk in the set and an empty neighbor),
-     * then follows the chain to form a closed polygon. For shapes with holes, returns
-     * only the exterior (largest area) loop.
+     * Uses a right-hand (clockwise) wall-following rule to correctly handle
+     * vertices where more than 2 edges meet.
      */
     private static List<int[]> traceExteriorOutline(Set<ChunkPos> chunks) {
-        // Build adjacency graph from border edges
-        Map<Long, List<Long>> adjacency = new HashMap<>();
+        // Build adjacency graph from border edges (using Set to avoid duplicates)
+        Map<Long, Set<Long>> adjacency = new HashMap<>();
 
         for (ChunkPos chunk : chunks) {
             int x0 = chunk.x * 16, z0 = chunk.z * 16;
             int x1 = (chunk.x + 1) * 16, z1 = (chunk.z + 1) * 16;
 
             if (!chunks.contains(new ChunkPos(chunk.x, chunk.z - 1)))
-                addEdge(adjacency, packPoint(x0, z0), packPoint(x1, z0));
+                addEdgeToSet(adjacency, packPoint(x0, z0), packPoint(x1, z0));
             if (!chunks.contains(new ChunkPos(chunk.x + 1, chunk.z)))
-                addEdge(adjacency, packPoint(x1, z0), packPoint(x1, z1));
+                addEdgeToSet(adjacency, packPoint(x1, z0), packPoint(x1, z1));
             if (!chunks.contains(new ChunkPos(chunk.x, chunk.z + 1)))
-                addEdge(adjacency, packPoint(x1, z1), packPoint(x0, z1));
+                addEdgeToSet(adjacency, packPoint(x1, z1), packPoint(x0, z1));
             if (!chunks.contains(new ChunkPos(chunk.x - 1, chunk.z)))
-                addEdge(adjacency, packPoint(x0, z1), packPoint(x0, z0));
+                addEdgeToSet(adjacency, packPoint(x0, z1), packPoint(x0, z0));
         }
 
-        // Trace all loops
-        Set<Long> visited = new HashSet<>();
-        List<List<int[]>> loops = new ArrayList<>();
+        if (adjacency.isEmpty()) return List.of();
 
-        for (long start : adjacency.keySet()) {
-            if (visited.contains(start)) continue;
-
-            List<int[]> loop = new ArrayList<>();
-            long current = start;
-            long prev = -1;
-
-            do {
-                visited.add(current);
-                loop.add(new int[]{unpackX(current), unpackZ(current)});
-                List<Long> neighbors = adjacency.getOrDefault(current, List.of());
-                long next = -1;
-                for (long n : neighbors) {
-                    if (n != prev) {
-                        next = n;
-                        break;
-                    }
-                }
-                prev = current;
-                current = next;
-            } while (current != -1 && current != start);
-
-            loops.add(loop);
-        }
-
-        // Return the loop with the largest area (the exterior outline)
-        List<int[]> exterior = null;
-        double maxArea = 0;
-        for (List<int[]> loop : loops) {
-            double area = Math.abs(signedArea(loop));
-            if (area > maxArea) {
-                maxArea = area;
-                exterior = loop;
+        // Find topmost-leftmost vertex (min z, then min x) — guaranteed on exterior
+        long start = -1;
+        int minZ = Integer.MAX_VALUE, minX = Integer.MAX_VALUE;
+        for (long v : adjacency.keySet()) {
+            int vz = unpackZ(v), vx = unpackX(v);
+            if (vz < minZ || (vz == minZ && vx < minX)) {
+                minZ = vz;
+                minX = vx;
+                start = v;
             }
         }
 
-        return exterior != null ? exterior : List.of();
+        if (start == -1) return List.of();
+
+        // Trace exterior CW using right-hand rule.
+        // Pretend we arrived going "up" (0,-1) so the first right-turn tries "right" (+x).
+        List<int[]> outline = new ArrayList<>();
+        long current = start;
+        int dirX = 0, dirZ = -1;
+        int safetyLimit = chunks.size() * 4 + 4;
+
+        do {
+            outline.add(new int[]{unpackX(current), unpackZ(current)});
+            if (outline.size() > safetyLimit) {
+                BluePAC.LOGGER.warn("Outline tracing exceeded safety limit ({} chunks), stopping.", chunks.size());
+                break;
+            }
+
+            Set<Long> neighbors = adjacency.getOrDefault(current, Set.of());
+
+            // Try CW directions: right-turn, straight, left-turn, u-turn
+            int[][] turns = {
+                    {-dirZ, dirX},    // right turn
+                    {dirX, dirZ},     // straight
+                    {dirZ, -dirX},    // left turn
+                    {-dirX, -dirZ}    // u-turn
+            };
+
+            long next = -1;
+            int nextDirX = 0, nextDirZ = 0;
+
+            for (int[] turn : turns) {
+                long candidate = packPoint(
+                        unpackX(current) + turn[0] * 16,
+                        unpackZ(current) + turn[1] * 16
+                );
+                if (neighbors.contains(candidate)) {
+                    next = candidate;
+                    nextDirX = turn[0];
+                    nextDirZ = turn[1];
+                    break;
+                }
+            }
+
+            if (next == -1) break;
+
+            dirX = nextDirX;
+            dirZ = nextDirZ;
+            current = next;
+        } while (current != start);
+
+        return outline;
+    }
+
+    private static void addEdgeToSet(Map<Long, Set<Long>> adj, long a, long b) {
+        adj.computeIfAbsent(a, k -> new HashSet<>()).add(b);
+        adj.computeIfAbsent(b, k -> new HashSet<>()).add(a);
     }
 
     /**
@@ -347,22 +374,6 @@ public class BlueMapIntegration {
             builder.addPoint(new com.flowpowered.math.vector.Vector2d(point[0], point[1]));
         }
         return builder.build();
-    }
-
-    private static double signedArea(List<int[]> points) {
-        double area = 0;
-        int n = points.size();
-        for (int i = 0; i < n; i++) {
-            int[] curr = points.get(i);
-            int[] next = points.get((i + 1) % n);
-            area += (double) curr[0] * next[1] - (double) next[0] * curr[1];
-        }
-        return area / 2.0;
-    }
-
-    private static void addEdge(Map<Long, List<Long>> adj, long a, long b) {
-        adj.computeIfAbsent(a, k -> new ArrayList<>()).add(b);
-        adj.computeIfAbsent(b, k -> new ArrayList<>()).add(a);
     }
 
     private static long packPoint(int x, int z) {
