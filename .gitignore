@@ -22,6 +22,7 @@ out/
 .project
 .settings
 .springBeans
+.claude
 .sts4-cache
 bin/
 !**/src/**/bin/

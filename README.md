@@ -49,10 +49,10 @@ On first launch the mod generates `config/bluepac-common.toml`:
 
 ---
 
-Made by [@saunhardy](https://github.com/matejhozlar)
-
----
-
 ## Disclaimer
 
 BluePAC is an independent, third-party mod and is **not affiliated with, endorsed by, or associated with** the BlueMap or Open Parties and Claims projects. BlueMap and Open Parties and Claims are the property of their respective authors. All trademarks and registered trademarks are the property of their respective owners.
+
+---
+
+Made by [@saunhardy](https://github.com/matejhozlar)
