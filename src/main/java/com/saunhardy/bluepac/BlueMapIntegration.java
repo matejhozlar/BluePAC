@@ -108,8 +108,10 @@ public class BlueMapIntegration {
                 dimClaims.getStream().forEach(claimPosList -> {
                     var claimState = claimPosList.getClaimState();
                     int subConfigIndex = claimState.getSubConfigIndex();
-                    int color = playerInfo.getClaimsColor(subConfigIndex);
-                    String claimName = playerInfo.getClaimsName(subConfigIndex);
+                    Integer subColor = playerInfo.getClaimsColor(subConfigIndex);
+                    int color = subColor != null ? subColor : playerInfo.getClaimsColor();
+                    String subName = playerInfo.getClaimsName(subConfigIndex);
+                    String claimName = subName != null ? subName : playerInfo.getClaimsName();
 
                     String groupKey = playerId + "_" + subConfigIndex;
                     String label = buildLabel(playerName, playerId.toString(), claimName);
