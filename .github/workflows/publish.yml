@@ -34,7 +34,7 @@ jobs:
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           version: ${{ inputs.version }}
-          version-type: release
+          version-type: beta
           name: "[${{ inputs.version }}] BluePAC"
           changelog-file: CHANGELOG.md
           loaders: neoforge
