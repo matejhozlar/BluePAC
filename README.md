@@ -5,6 +5,8 @@
 
 **BluePAC** bridges [BlueMap](https://bluemap.bluecolored.de/) and [Open Parties and Claims](https://www.curseforge.com/minecraft/mc-mods/open-parties-and-claims) to display color-coded claimed chunks directly on your BlueMap web map. See at a glance who owns what — no need to log in to the game.
 
+![BluePAC Preview](docs/bluepac-preview.webp)
+
 ---
 
 ## Features
