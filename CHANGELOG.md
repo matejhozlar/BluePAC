@@ -7,4 +7,5 @@
 - Fixed BlueMap world ID matching (handles `world#minecraft:overworld` format)
 - Claim changes now update the map live with debounced refreshes
 - Collinear polygon points are removed for cleaner shapes
+- Fixed crash when a sub-config has no custom color or name set
 
