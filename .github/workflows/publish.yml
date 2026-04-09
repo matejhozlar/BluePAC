@@ -2,11 +2,6 @@ name: Publish to CurseForge
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Release'
-        required: true
-        type: string
 
 jobs:
   publish:
@@ -27,15 +22,19 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
 
+      - name: Get version
+        id: version
+        run: echo "value=$(grep '^mod_version=' gradle.properties | cut -d'=' -f2)" >> $GITHUB_OUTPUT
+
       - name: Build with Gradle
         run: ./gradlew build
 
       - name: Publish to CurseForge
         uses: Kir-Antipov/mc-publish@v3.3
         with:
-          version: ${{ inputs.version }}
+          version: ${{ steps.version.outputs.value }}
           version-type: beta
-          name: "[${{ inputs.version }}] BluePAC"
+          name: "[${{ steps.version.outputs.value }}] BluePAC"
           changelog-file: CHANGELOG.md
           loaders: neoforge
           game-versions: 1.21.1
