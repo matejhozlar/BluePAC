@@ -1,7 +1,8 @@
 # BluePAC – BlueMap + Open Parties and Claims Integration
 
-![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-5E7C16?logo=minecraft&logoColor=white)
-![NeoForge](https://img.shields.io/badge/NeoForge-21.1+-orange)
+![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1-5E7C16?logo=minecraft&logoColor=white)
+![Forge](https://img.shields.io/badge/Forge-47+-orange)
+![Fabric](https://img.shields.io/badge/Fabric-0.16+-dbd0b4)
 
 **BluePAC** bridges [BlueMap](https://bluemap.bluecolored.de/) and [Open Parties and Claims](https://www.curseforge.com/minecraft/mc-mods/open-parties-and-claims) to display color-coded claimed chunks directly on your BlueMap web map. See at a glance who owns what — no need to log in to the game.
 
@@ -22,8 +23,8 @@
 
 ## Requirements
 
-- Minecraft **1.21.1**
-- **NeoForge** 21.1+
+- Minecraft **1.20.1**
+- **Forge** 47+ (the Forge build also runs on NeoForge 1.20.1) **or** **Fabric** (with [Fabric API](https://modrinth.com/mod/fabric-api))
 - [**BlueMap**](https://modrinth.com/plugin/bluemap)
 - [**Open Parties and Claims**](https://modrinth.com/mod/open-parties-and-claims)
 
@@ -31,14 +32,14 @@
 
 ## Configuration
 
-On first launch the mod generates `config/bluepac-common.toml`:
+On first launch the mod generates `config/bluepac-server.toml`, with all options under a `[markers]` table:
 
 | Option | Default | Description |
 |--------|---------|-------------|
 | `fillOpacity` | `0.3` | Fill transparency of claim regions (0.0–1.0) |
 | `lineOpacity` | `0.8` | Border transparency of claim regions (0.0–1.0) |
-| `lineWidth` | `2` | Border width in pixels |
-| `markerYHeight` | `64` | Y level at which markers are drawn on the map |
+| `lineWidth` | `2` | Border width in pixels (1–10) |
+| `markerYHeight` | `64` | Y level at which markers are drawn on the map (-64–320) |
 
 ---
 

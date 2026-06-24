@@ -1,0 +1,68 @@
+plugins {
+    id 'com.gradleup.shadow'
+}
+
+architectury {
+    platformSetupLoomIde()
+    forge()
+}
+
+configurations {
+    common {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentForge.extendsFrom common
+
+    shadowBundle {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+}
+
+dependencies {
+    forge "net.minecraftforge:forge:$rootProject.forge_version"
+
+    common(project(path: ':common', configuration: 'namedElements')) { transitive false }
+    shadowBundle project(path: ':common', configuration: 'transformProductionForge')
+}
+
+processResources {
+    inputs.property 'version', project.version
+    inputs.property 'minecraft_version_range', rootProject.minecraft_version_range
+    inputs.property 'forge_version_range', rootProject.forge_version_range
+    inputs.property 'loader_version_range', rootProject.loader_version_range
+    inputs.property 'mod_id', rootProject.mod_id
+    inputs.property 'mod_name', rootProject.mod_name
+    inputs.property 'mod_authors', rootProject.mod_authors
+    inputs.property 'mod_license', rootProject.mod_license
+    inputs.property 'mod_description', rootProject.mod_description
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand(
+                version: project.version,
+                minecraft_version: rootProject.minecraft_version,
+                minecraft_version_range: rootProject.minecraft_version_range,
+                forge_version: rootProject.forge_version,
+                forge_version_range: rootProject.forge_version_range,
+                loader_version_range: rootProject.loader_version_range,
+                mod_id: rootProject.mod_id,
+                mod_name: rootProject.mod_name,
+                mod_authors: rootProject.mod_authors,
+                mod_license: rootProject.mod_license,
+                mod_description: rootProject.mod_description
+        )
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowBundle]
+    archiveClassifier = 'dev-shadow'
+    mergeServiceFiles()
+}
+
+remapJar {
+    inputFile.set shadowJar.archiveFile
+}

@@ -88,10 +88,10 @@ public class BlueMapIntegration {
 
         var claimsManager = OpenPACServerAPI.get(server).getServerClaimsManager();
 
-        float fillOpacity = Config.FILL_OPACITY.get().floatValue();
-        float lineOpacity = Config.LINE_OPACITY.get().floatValue();
-        int lineWidth = Config.LINE_WIDTH.get();
-        int markerY = Config.MARKER_Y_HEIGHT.get();
+        float fillOpacity = (float) Config.fillOpacity();
+        float lineOpacity = (float) Config.lineOpacity();
+        int lineWidth = Config.lineWidth();
+        int markerY = Config.markerYHeight();
 
         // Group chunks by dimension → (player+subConfig) → set of ChunkPos
         Map<String, Map<String, ClaimGroup>> dimensionGroups = new HashMap<>();

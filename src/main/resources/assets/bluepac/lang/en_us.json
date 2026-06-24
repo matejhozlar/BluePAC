@@ -1,9 +1,0 @@
-{
-  "bluepac.configuration.title": "BluePAC Configs",
-  "bluepac.configuration.section.bluepac.common.toml": "BluePAC Configs",
-  "bluepac.configuration.section.bluepac.common.toml.title": "BluePAC Configs",
-  "bluepac.configuration.fillOpacity": "Fill Opacity",
-  "bluepac.configuration.lineOpacity": "Line Opacity",
-  "bluepac.configuration.lineWidth": "Line Width",
-  "bluepac.configuration.markerYHeight": "Marker Y Height"
-}

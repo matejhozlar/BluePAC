@@ -1,0 +1,17 @@
+architectury {
+    common rootProject.enabled_platforms.split(',')
+}
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+
+    // Config backend. Provided at runtime by Forge; bundled into the Fabric jar via shadow.
+    compileOnly "com.electronwill.night-config:core:$rootProject.nightconfig_version"
+    compileOnly "com.electronwill.night-config:toml:$rootProject.nightconfig_version"
+
+    // Integration APIs. All provided at runtime by the user's installed mods, so compile-only.
+    // BlueMap ships flow-math and its own API; OpenPAC ships its common API on both loaders.
+    compileOnly "de.bluecolored.bluemap:BlueMapAPI:$rootProject.bluemap_api_version"
+    compileOnly "com.flowpowered:flow-math:$rootProject.flowmath_version"
+    modCompileOnly "maven.modrinth:open-parties-and-claims:forge-$rootProject.minecraft_version-$rootProject.opac_version"
+}

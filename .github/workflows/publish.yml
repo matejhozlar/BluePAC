@@ -2,6 +2,17 @@ name: Publish to CurseForge
 
 on:
   workflow_dispatch:
+    inputs:
+      publish_forge:
+        description: 'Publish Forge jar (also tagged for NeoForge 1.20.1)'
+        required: true
+        type: boolean
+        default: true
+      publish_fabric:
+        description: 'Publish Fabric jar'
+        required: true
+        type: boolean
+        default: true
 
 jobs:
   publish:
@@ -10,11 +21,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v5
 
+      - name: Get version
+        id: version
+        run: echo "value=$(grep '^mod_version' gradle.properties | sed -E 's/^mod_version\s*=\s*//' | tr -d ' \r\n')" >> $GITHUB_OUTPUT
+
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '17'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
@@ -22,24 +37,39 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
 
-      - name: Get version
-        id: version
-        run: echo "value=$(grep '^mod_version=' gradle.properties | cut -d'=' -f2)" >> $GITHUB_OUTPUT
-
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Publish to CurseForge
+      - name: Publish Forge to CurseForge
+        if: ${{ inputs.publish_forge }}
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           version: ${{ steps.version.outputs.value }}
           version-type: beta
           name: "[${{ steps.version.outputs.value }}] BluePAC"
           changelog-file: CHANGELOG.md
-          loaders: neoforge
-          game-versions: 1.21.1
-          files: build/libs/!(*-@(dev|sources|javadoc)).jar
-          java: 21
+          loaders: |
+            forge
+            neoforge
+          game-versions: 1.20.1
+          files: forge/build/libs/!(*-@(dev|dev-shadow|sources|javadoc)).jar
+          java: 17
+
+          curseforge-id: 1489467
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+      - name: Publish Fabric to CurseForge
+        if: ${{ inputs.publish_fabric }}
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          version: ${{ steps.version.outputs.value }}
+          version-type: beta
+          name: "[${{ steps.version.outputs.value }}] BluePAC"
+          changelog-file: CHANGELOG.md
+          loaders: fabric
+          game-versions: 1.20.1
+          files: fabric/build/libs/!(*-@(dev|dev-shadow|sources|javadoc)).jar
+          java: 17
 
           curseforge-id: 1489467
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
